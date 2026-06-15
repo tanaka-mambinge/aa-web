@@ -25,7 +25,7 @@ async function AuthenticatedShell({ children }: { children: React.ReactNode }) {
     redirect("/login");
   }
 
-  const initialCollapsed = (await cookies()).get("aap.sidebar.collapsed")?.value === "1";
+  const initialCollapsed = (await cookies()).get("aa.sidebar.collapsed")?.value === "1";
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink lg:flex-row">

@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "AAP Control Surface",
-    short_name: "AAP Control",
+    name: "Agent Approvals",
+    short_name: "AA",
     description: "A control surface for approvals and CLI token operations",
     start_url: "/",
     scope: "/",

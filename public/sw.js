@@ -1,4 +1,4 @@
-const CACHE_NAME = "aap-control-pwa-v1";
+const CACHE_NAME = "aa-control-pwa-v1";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(self.skipWaiting());

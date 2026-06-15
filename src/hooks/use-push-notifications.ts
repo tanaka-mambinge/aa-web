@@ -31,7 +31,7 @@ interface PushState {
   message: string;
 }
 
-const STORAGE_KEY = "aap.notifications.pref";
+const STORAGE_KEY = "aa.notifications.pref";
 const SWR_KEY = "push-notification-state";
 
 function supportsPush() {

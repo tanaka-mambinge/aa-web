@@ -14,7 +14,7 @@ export default function AuthPageShell({ title, description, children }: AuthPage
           <div className="space-y-1.5 text-center">
             <div className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] text-ink-faint">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              AAP CONTROL
+              AA
             </div>
             <h1 className="text-2xl font-semibold tracking-tight text-ink">{title}</h1>
             <p className="text-sm leading-6 text-ink-muted">{description}</p>

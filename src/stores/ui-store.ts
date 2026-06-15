@@ -21,7 +21,7 @@ interface UiState {
   setEmailObfuscated: (obfuscated: boolean) => void;
 }
 
-const EMAIL_PRIVACY_KEY = "aap.email.obfuscated";
+const EMAIL_PRIVACY_KEY = "aa.email.obfuscated";
 
 export const useUiStore = create<UiState>((set) => ({
   selectedApproval: null,

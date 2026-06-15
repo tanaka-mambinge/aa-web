@@ -5,7 +5,7 @@ import type { User } from "@/lib/types";
 
 export async function getServerUser(): Promise<User | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get("aap_access_token")?.value;
+  const token = cookieStore.get("aa_access_token")?.value;
   if (!token) {
     return null;
   }
@@ -20,7 +20,7 @@ export async function getServerUser(): Promise<User | null> {
 
   const response = await fetch(`${protocol}://${host}${API_PREFIX}/auth/me`, {
     headers: {
-      Cookie: `aap_access_token=${token}`,
+      Cookie: `aa_access_token=${token}`,
     },
     cache: "no-store",
   });

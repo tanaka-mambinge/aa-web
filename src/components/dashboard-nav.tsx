@@ -29,7 +29,7 @@ const LINKS = [
   { href: "/dashboard/tokens", label: "Project tokens", icon: IconKey },
 ];
 
-const COLLAPSE_KEY = "aap.sidebar.collapsed";
+const COLLAPSE_KEY = "aa.sidebar.collapsed";
 
 export default function DashboardNav({ user, initialCollapsed }: DashboardNavProps) {
   const pathname = usePathname();
@@ -74,8 +74,8 @@ export default function DashboardNav({ user, initialCollapsed }: DashboardNavPro
     <>
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-surface px-4 py-3 lg:hidden">
         <div className="inline-flex items-center gap-2 font-semibold tracking-tight text-ink">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs text-accent-ink">A</span>
-          AAP Control
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs text-accent-ink">AA</span>
+          AA
         </div>
         <button
           onClick={() => setMobileOpen(true)}
@@ -112,7 +112,7 @@ export default function DashboardNav({ user, initialCollapsed }: DashboardNavPro
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-medium text-accent-ink">
               A
             </span>
-            <span className={cn(labelClasses, "text-sm font-semibold tracking-tight text-ink")}>AAP Control</span>
+              <span className={cn(labelClasses, "text-sm font-semibold tracking-tight text-ink")}>AA</span>
           </div>
           <button
             onClick={() => setMobileOpen(false)}

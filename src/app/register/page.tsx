@@ -16,7 +16,7 @@ export default async function RegisterPage() {
           <div className="space-y-3 text-center">
             <div className="inline-flex items-center gap-2 font-mono text-xs tracking-[0.2em] text-ink-faint">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              AAP CONTROL
+              AA
             </div>
             <h1 className="text-3xl font-semibold tracking-tight text-ink">
               Create an operator account

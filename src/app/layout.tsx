@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AAP Control Surface",
+  title: "Agent Approvals",
   description: "Sharp-edged control surface for approvals and CLI token operations",
   manifest: "/manifest.webmanifest",
   icons: {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "AAP Control",
+    title: "AA",
   },
 };
 

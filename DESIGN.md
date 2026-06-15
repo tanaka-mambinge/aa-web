@@ -1,5 +1,5 @@
 ---
-name: AAP Control Surface
+name: Agent Approvals
 description: Cool-neutral compliance-tooling console — white cards on a crisp slate-tinted canvas, clearly-drawn hairline borders, squared dark-ink buttons, tight radii, and punchy semantic status colors. Reads as a precise internal control register, not a cream SaaS app.
 canonical_reference: src/app/dashboard/page.tsx
 tokens_source_of_truth: src/app/globals.css         # never hardcode hex in components; use semantic tokens
@@ -38,7 +38,7 @@ components:
   input: "h-11 rounded-md border border-border, focus ring on accent/10"
 ---
 
-# AAP Control Surface — Design System
+# Agent Approvals — Design System
 
 > **For future agents:** this is the single source of design truth for `sample-web-ui`.
 > Read it before touching any UI. The colour/radius/shadow **values** live as semantic

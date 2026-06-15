@@ -78,7 +78,7 @@ export default function CreateTokenDialog({ open, onOpenChange, onCreated }: Cre
             <div className="space-y-2">
               <Dialog.Title className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">Create project token</Dialog.Title>
               <Dialog.Description className="text-sm leading-6 text-ink-muted">
-                The raw token is shown once. Set it as <code className="font-mono text-ink">AAP_TOKEN</code> in
+                The raw token is shown once. Set it as <code className="font-mono text-ink">AA_TOKEN</code> in
                 that project&apos;s environment.
               </Dialog.Description>
             </div>

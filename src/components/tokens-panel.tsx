@@ -41,8 +41,8 @@ export default function TokensPanel() {
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight text-ink">Project tokens</h1>
           <p className="max-w-xl text-sm leading-7 text-ink-muted">
-            Create one token per project. Set it as <code className="font-mono text-ink-muted">AAP_TOKEN</code> in
-            that project&apos;s environment so the AAP SDK can authenticate and approvals can be
+            Create one token per project. Set it as <code className="font-mono text-ink-muted">AA_TOKEN</code> in
+            that project&apos;s environment so the AA SDK can authenticate and approvals can be
             filtered by project.
           </p>
         </div>
@@ -59,7 +59,7 @@ export default function TokensPanel() {
           </span>
           <div>
             <p className="text-sm font-medium text-ink">Project tokens</p>
-            <p className="text-sm text-ink-muted">Each token authenticates one project&apos;s AAP SDK via <code className="font-mono">AAP_TOKEN</code>.</p>
+            <p className="text-sm text-ink-muted">Each token authenticates one project&apos;s AA SDK via <code className="font-mono">AA_TOKEN</code>.</p>
           </div>
         </div>
         <div className="mt-2 divide-y divide-border">
