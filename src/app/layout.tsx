@@ -19,7 +19,8 @@ export const metadata: Metadata = {
   description: "Sharp-edged control surface for approvals and CLI token operations",
   manifest: "/manifest.webmanifest",
   icons: {
-    apple: "/icon.svg",
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
   appleWebApp: {
     capable: true,
