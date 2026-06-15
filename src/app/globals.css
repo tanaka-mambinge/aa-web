@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+:root {
+  /* Primitives — cool neutral slate ramp (hue ~255). Light end is a crisp
+     near-white canvas, dark end is a cool near-black ink — used for both text
+     and the primary dark button. Borders sit a clear step off the canvas so
+     card edges and row dividers read without washing out. */
+  --neutral-0: #ffffff;
+  --neutral-50: #eceff3;
+  --neutral-100: #e1e6ec;
+  --neutral-200: #c8d0da;
+  --neutral-300: #b3bcc8;
+  --neutral-400: #9aa2ae;
+  --neutral-500: #6b7480;
+  --neutral-600: #525c68;
+  --neutral-700: #3c4651;
+  --neutral-800: #283039;
+  --neutral-900: #16191d;
+  --neutral-950: #0d0f12;
+
+  /* Primitives — punchy status hues. Saturated, legible foreground on a clear
+     pale tint; never a bare saturated fill. */
+  --green-500: #059669;
+  --green-50: #d9f5e7;
+  --red-500: #dc2626;
+  --red-50: #fde4e2;
+  --amber-500: #d97706;
+  --amber-50: #fcefcf;
+  --blue-500: #2563eb;
+  --blue-50: #dbeafe;
+  --orange-500: #ea580c;
+  --orange-50: #ffedd5;
+
+  /* Semantic roles — everything downstream references these, never primitives */
+  --color-canvas: var(--neutral-50);
+  --color-surface: var(--neutral-0);
+  --color-surface-raised: var(--neutral-100);
+  --color-border: var(--neutral-200);
+  --color-border-strong: var(--neutral-300);
+
+  --color-ink: var(--neutral-900);
+  --color-ink-muted: var(--neutral-500);
+  --color-ink-faint: var(--neutral-400);
+
+  --color-accent: var(--neutral-900);
+  --color-accent-strong: var(--neutral-950);
+  --color-accent-ink: var(--neutral-50);
+  --color-accent-muted: var(--neutral-100);
+
+  --color-success: var(--green-500);
+  --color-success-muted: var(--green-50);
+  --color-danger: var(--red-500);
+  --color-danger-muted: var(--red-50);
+  --color-warning: var(--amber-500);
+  --color-warning-muted: var(--amber-50);
+  --color-info: var(--blue-500);
+  --color-info-muted: var(--blue-50);
+  --color-attention: var(--orange-500);
+  --color-attention-muted: var(--orange-50);
+
+  /* One radius language — tight, squared, utilitarian (control-tooling feel) */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Cool, flat elevation — edges are carried by borders, shadows stay subtle */
+  --shadow-card: 0 1px 2px rgb(16 25 35 / 0.04), 0 1px 3px rgb(16 25 35 / 0.06);
+  --shadow-raised: 0 4px 12px -2px rgb(16 25 35 / 0.08), 0 12px 32px -8px rgb(16 25 35 / 0.12);
+}
+
+@theme inline {
+  --color-canvas: var(--color-canvas);
+  --color-surface: var(--color-surface);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-ink-faint: var(--color-ink-faint);
+  --color-accent: var(--color-accent);
+  --color-accent-strong: var(--color-accent-strong);
+  --color-accent-ink: var(--color-accent-ink);
+  --color-accent-muted: var(--color-accent-muted);
+  --color-success: var(--color-success);
+  --color-success-muted: var(--color-success-muted);
+  --color-danger: var(--color-danger);
+  --color-danger-muted: var(--color-danger-muted);
+  --color-warning: var(--color-warning);
+  --color-warning-muted: var(--color-warning-muted);
+  --color-info: var(--color-info);
+  --color-info-muted: var(--color-info-muted);
+  --color-attention: var(--color-attention);
+  --color-attention-muted: var(--color-attention-muted);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
