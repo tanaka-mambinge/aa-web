@@ -1,0 +1,8 @@
+.next
+node_modules
+.env*
+tests
+playwright-report
+test-results
+coverage
+*.log
