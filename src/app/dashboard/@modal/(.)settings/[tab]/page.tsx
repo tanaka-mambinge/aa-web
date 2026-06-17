@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import SettingsDialog from "@/components/settings-dialog";
+import { getRequestPath } from "@/lib/request-path";
 import { getServerUser } from "@/lib/server-auth";
 
 const TABS = new Set(["profile", "password", "connections", "notifications"]);
@@ -12,7 +13,7 @@ export default async function SettingsModalPage({
 }) {
   const user = await getServerUser();
   if (!user) {
-    redirect("/login?next=/dashboard");
+    redirect(`/login?next=${encodeURIComponent(await getRequestPath("/dashboard/settings/profile"))}`);
   }
 
   const { tab } = await params;

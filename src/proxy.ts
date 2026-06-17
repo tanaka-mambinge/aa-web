@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const DASHBOARD_PATH_PREFIX = "/dashboard";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const token = request.cookies.get("aa_access_token")?.value;
 

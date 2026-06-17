@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import DashboardNav from "@/components/dashboard-nav";
 import LoadingScreen from "@/components/loading-screen";
 import PushNotificationsBanner from "@/components/push-notifications-banner";
+import { getRequestPath } from "@/lib/request-path";
 import { getServerUser } from "@/lib/server-auth";
 
 export default function DashboardLayout({
@@ -27,7 +28,7 @@ export default function DashboardLayout({
 async function AuthenticatedShell({ children, modal }: { children: React.ReactNode; modal: React.ReactNode }) {
   const user = await getServerUser();
   if (!user) {
-    redirect("/login?next=/dashboard");
+    redirect(`/login?next=${encodeURIComponent(await getRequestPath("/dashboard"))}`);
   }
 
   const initialCollapsed = (await cookies()).get("aa.sidebar.collapsed")?.value === "1";
