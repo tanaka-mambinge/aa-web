@@ -9,8 +9,9 @@ import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import Input from "@/components/ui/input";
 import { apiRequest } from "@/lib/http";
+import type { User } from "@/lib/types";
 
-const passwordSchema = z
+const changePasswordSchema = z
   .object({
     current_password: z.string().min(1, "Current password is required"),
     new_password: z.string().min(8, "New password must be at least 8 characters"),
@@ -21,9 +22,28 @@ const passwordSchema = z
     path: ["confirm_password"],
   });
 
-type PasswordFormValues = z.infer<typeof passwordSchema>;
+const setPasswordSchema = z
+  .object({
+    new_password: z.string().min(8, "Password must be at least 8 characters"),
+    confirm_password: z.string().min(1, "Confirm your new password"),
+  })
+  .refine((value) => value.new_password === value.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
+  });
 
-export default function PasswordSection() {
+type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
+type SetPasswordValues = z.infer<typeof setPasswordSchema>;
+
+interface PasswordSectionProps {
+  user: User;
+}
+
+export default function PasswordSection({ user }: PasswordSectionProps) {
+  return user.has_password ? <ChangePasswordForm /> : <SetPasswordForm />;
+}
+
+function ChangePasswordForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const {
@@ -31,9 +51,9 @@ export default function PasswordSection() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<PasswordFormValues>({ resolver: zodResolver(passwordSchema) });
+  } = useForm<ChangePasswordValues>({ resolver: zodResolver(changePasswordSchema) });
 
-  async function onSubmit(values: PasswordFormValues) {
+  async function onSubmit(values: ChangePasswordValues) {
     try {
       setFormError(null);
       setSuccess(null);
@@ -61,17 +81,8 @@ export default function PasswordSection() {
       </div>
 
       <Card as="form" className="space-y-6 p-6 sm:p-7" onSubmit={handleSubmit(onSubmit)}>
-        {formError ? (
-          <div className="rounded-md border border-danger/20 bg-danger-muted px-4 py-3 text-sm text-danger">
-            {formError}
-          </div>
-        ) : null}
-
-        {success ? (
-          <div className="rounded-md border border-success/20 bg-success-muted px-4 py-3 text-sm text-success">
-            {success}
-          </div>
-        ) : null}
+        {formError ? <div className="rounded-md border border-danger/20 bg-danger-muted px-4 py-3 text-sm text-danger">{formError}</div> : null}
+        {success ? <div className="rounded-md border border-success/20 bg-success-muted px-4 py-3 text-sm text-success">{success}</div> : null}
 
         <div className="grid gap-5">
           <Input
@@ -97,9 +108,68 @@ export default function PasswordSection() {
           />
         </div>
 
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Updating…" : "Update password"}
-        </Button>
+        <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Updating…" : "Update password"}</Button>
+      </Card>
+    </section>
+  );
+}
+
+function SetPasswordForm() {
+  const [formError, setFormError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<SetPasswordValues>({ resolver: zodResolver(setPasswordSchema) });
+
+  async function onSubmit(values: SetPasswordValues) {
+    try {
+      setFormError(null);
+      setSuccess(null);
+
+      await apiRequest<void>("/auth/set-password", {
+        method: "POST",
+        body: JSON.stringify({ new_password: values.new_password }),
+      });
+
+      reset();
+      setSuccess("Password set successfully.");
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Failed to set password");
+    }
+  }
+
+  return (
+    <section className="max-w-2xl space-y-6">
+      <div className="space-y-2">
+        <h2 className="text-xl font-semibold text-ink">Password</h2>
+        <p className="max-w-xl text-sm leading-7 text-ink-muted">Add a password so you can sign in with email too.</p>
+      </div>
+
+      <Card as="form" className="space-y-6 p-6 sm:p-7" onSubmit={handleSubmit(onSubmit)}>
+        {formError ? <div className="rounded-md border border-danger/20 bg-danger-muted px-4 py-3 text-sm text-danger">{formError}</div> : null}
+        {success ? <div className="rounded-md border border-success/20 bg-success-muted px-4 py-3 text-sm text-success">{success}</div> : null}
+
+        <div className="grid gap-5">
+          <Input
+            label="New password"
+            type="password"
+            autoComplete="new-password"
+            error={errors.new_password?.message}
+            {...register("new_password")}
+          />
+          <Input
+            label="Confirm new password"
+            type="password"
+            autoComplete="new-password"
+            error={errors.confirm_password?.message}
+            {...register("confirm_password")}
+          />
+        </div>
+
+        <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving…" : "Set password"}</Button>
       </Card>
     </section>
   );

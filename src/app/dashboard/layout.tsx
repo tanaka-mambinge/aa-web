@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 async function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   const user = await getServerUser();
   if (!user) {
-    redirect("/login");
+    redirect("/login?next=/dashboard");
   }
 
   const initialCollapsed = (await cookies()).get("aa.sidebar.collapsed")?.value === "1";

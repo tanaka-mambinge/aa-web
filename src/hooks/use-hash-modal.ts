@@ -40,7 +40,12 @@ export function useHashModal(hash: string) {
  * route is left (e.g. via the back button), so the caller's state stays
  * consistent. Pass the result's `requestClose` to `Dialog.onOpenChange`.
  */
-export function useHashDialog(hash: string, open: boolean, onClose: () => void) {
+export function useHashDialog(
+  hash: string,
+  open: boolean,
+  onClose: () => void,
+  onOpen?: () => void,
+) {
   const target = `#${hash}`;
 
   useEffect(() => {
@@ -52,14 +57,24 @@ export function useHashDialog(hash: string, open: boolean, onClose: () => void) 
   }, [open, hash, target]);
 
   useEffect(() => {
+    function syncFromHash() {
+      if (!open && window.location.hash === target) {
+        onOpen?.();
+      }
+    }
+
     function onHashChange() {
       if (open && window.location.hash !== target) {
         onClose();
+      } else if (!open && window.location.hash === target) {
+        onOpen?.();
       }
     }
+
+    syncFromHash();
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
-  }, [open, target, onClose]);
+  }, [open, target, onClose, onOpen]);
 
   return { requestClose: onClose };
 }

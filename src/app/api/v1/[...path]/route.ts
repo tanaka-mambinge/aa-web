@@ -14,7 +14,9 @@ const HOP_BY_HOP_HEADERS = new Set([
 ]);
 
 async function proxyRequest(request: Request, path: string[]) {
+  const requestUrl = new URL(request.url);
   const backendUrl = new URL(`/api/v1/${path.join("/")}`, getBackendUrl());
+  backendUrl.search = requestUrl.search;
   const headers = new Headers(request.headers);
 
   for (const header of HOP_BY_HOP_HEADERS) {

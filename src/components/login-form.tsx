@@ -10,7 +10,9 @@ import { z } from "zod";
 import AuthFormCard from "@/components/auth/auth-form-card";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import SocialAuthButtons from "@/components/social-auth-buttons";
 import { apiRequest } from "@/lib/http";
+import { getSafeNextPath } from "@/lib/next-path";
 import type { AuthResponse } from "@/lib/types";
 
 const loginSchema = z.object({
@@ -20,7 +22,11 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginForm() {
+interface LoginFormProps {
+  nextPath?: string;
+}
+
+export default function LoginForm({ nextPath }: LoginFormProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +48,7 @@ export default function LoginForm() {
         }),
       });
 
-      router.push("/dashboard");
+      router.push(getSafeNextPath(nextPath));
       router.refresh();
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "Login failed");
@@ -53,6 +59,7 @@ export default function LoginForm() {
 
   return (
     <AuthFormCard error={error} onSubmit={handleSubmit(onSubmit)}>
+      <SocialAuthButtons mode="login" nextPath={nextPath} />
       <div className="space-y-3">
         <Input
           label="Email"

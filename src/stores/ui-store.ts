@@ -10,7 +10,7 @@ interface UiState {
   approvalFilter: "all" | "pending" | "approved" | "rejected" | "cancelled" | "timed_out";
   approvalCliFilter: string;
   settingsOpen: boolean;
-  settingsTab: "profile" | "password" | "notifications";
+  settingsTab: "profile" | "password" | "notifications" | "connections";
   emailObfuscated: boolean;
   setSelectedApproval: (approval: Approval | null) => void;
   setCreatedToken: (token: CliTokenCreateResponse | null) => void;

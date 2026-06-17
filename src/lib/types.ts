@@ -4,6 +4,8 @@ export interface User {
   name: string;
   email: string;
   created_at: string;
+  has_password: boolean;
+  auth_methods: string[];
 }
 
 export interface AuthResponse {

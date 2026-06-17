@@ -2,8 +2,9 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
-import { IconBell, IconLock, IconUser, IconX } from "@tabler/icons-react";
+import { IconBell, IconLink, IconLock, IconUser, IconX } from "@tabler/icons-react";
 
+import ConnectionsSection from "@/components/settings/connections-section";
 import NotificationsSection from "@/components/settings/notifications-section";
 import PasswordSection from "@/components/settings/password-section";
 import ProfileSection from "@/components/settings/profile-section";
@@ -19,6 +20,7 @@ interface SettingsDialogProps {
 const TABS = [
   { value: "profile", label: "Profile", icon: IconUser },
   { value: "password", label: "Password", icon: IconLock },
+  { value: "connections", label: "Connections", icon: IconLink },
   { value: "notifications", label: "Notifications", icon: IconBell },
 ] as const;
 
@@ -34,7 +36,12 @@ export default function SettingsDialog({ user }: SettingsDialogProps) {
   const tab = useUiStore((state) => state.settingsTab);
   const setOpen = useUiStore((state) => state.setSettingsOpen);
   const setTab = useUiStore((state) => state.setSettingsTab);
-  const { requestClose } = useHashDialog("settings", open, () => setOpen(false));
+  const { requestClose } = useHashDialog(
+    "settings",
+    open,
+    () => setOpen(false),
+    () => setOpen(true),
+  );
 
   return (
     <Dialog.Root open={open} onOpenChange={(next) => !next && requestClose()}>
@@ -47,7 +54,7 @@ export default function SettingsDialog({ user }: SettingsDialogProps) {
                 Profile and preferences
               </Dialog.Title>
               <Dialog.Description className="text-sm leading-6 text-ink-muted">
-                Manage your profile, change your password, and control notifications.
+                Manage your profile, password, linked accounts, and notifications.
               </Dialog.Description>
             </div>
 
@@ -63,7 +70,7 @@ export default function SettingsDialog({ user }: SettingsDialogProps) {
 
           <Tabs.Root value={tab} onValueChange={(value) => setTab(value as typeof tab)} className="flex min-h-0 flex-1 flex-col">
             <div className="border-b border-border px-5 py-4 sm:hidden">
-              <Tabs.List className="grid w-full grid-cols-3 gap-1 rounded-md border border-border bg-surface p-1">
+              <Tabs.List className="grid w-full grid-cols-4 gap-1 rounded-md border border-border bg-surface p-1">
                 {TABS.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -98,7 +105,10 @@ export default function SettingsDialog({ user }: SettingsDialogProps) {
                   <ProfileSection user={user} />
                 </Tabs.Content>
                 <Tabs.Content value="password" className="outline-none">
-                  <PasswordSection />
+                  <PasswordSection user={user} />
+                </Tabs.Content>
+                <Tabs.Content value="connections" className="outline-none">
+                  <ConnectionsSection user={user} />
                 </Tabs.Content>
                 <Tabs.Content value="notifications" className="outline-none">
                   <NotificationsSection />

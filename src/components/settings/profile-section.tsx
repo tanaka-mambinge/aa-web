@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState } from "react";
 import { IconLogout2 } from "@tabler/icons-react";
 
 import Button from "@/components/ui/button";
@@ -24,14 +24,17 @@ function formatDate(value: string) {
 export default function ProfileSection({ user }: ProfileSectionProps) {
   const { displayEmail, emailObfuscated, setEmailObfuscated } = useEmailPrivacy(user.email);
   const router = useRouter();
-  const [isLoggingOut, startLogout] = useTransition();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   async function logout() {
-    await apiRequest<{ ok: boolean }>("/auth/logout", { method: "POST" });
-    startLogout(() => {
-      router.push("/login");
+    try {
+      setIsLoggingOut(true);
+      await apiRequest<{ ok: boolean }>("/auth/logout", { method: "POST" });
+      router.replace("/login");
       router.refresh();
-    });
+    } finally {
+      setIsLoggingOut(false);
+    }
   }
 
   return (

@@ -1,12 +1,19 @@
 import { redirect } from "next/navigation";
 
 import RegisterForm from "@/components/register-form";
+import { getSafeNextPath } from "@/lib/next-path";
 import { getServerUser } from "@/lib/server-auth";
 
-export default async function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ next?: string }>;
+}) {
   const user = await getServerUser();
+  const resolvedSearchParams = await searchParams;
+  const nextPath = getSafeNextPath(resolvedSearchParams?.next);
   if (user) {
-    redirect("/dashboard");
+    redirect(nextPath);
   }
 
   return (
@@ -27,7 +34,7 @@ export default async function RegisterPage() {
             </p>
           </div>
 
-          <RegisterForm />
+          <RegisterForm nextPath={nextPath} />
         </div>
       </div>
     </div>

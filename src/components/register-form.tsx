@@ -10,7 +10,9 @@ import { z } from "zod";
 import AuthFormCard from "@/components/auth/auth-form-card";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import SocialAuthButtons from "@/components/social-auth-buttons";
 import { apiRequest } from "@/lib/http";
+import { getSafeNextPath } from "@/lib/next-path";
 import type { AuthResponse } from "@/lib/types";
 
 const registerSchema = z
@@ -27,7 +29,11 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export default function RegisterForm() {
+interface RegisterFormProps {
+  nextPath?: string;
+}
+
+export default function RegisterForm({ nextPath }: RegisterFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const {
@@ -50,7 +56,7 @@ export default function RegisterForm() {
       });
 
       startTransition(() => {
-        router.push("/dashboard");
+        router.push(getSafeNextPath(nextPath));
         router.refresh();
       });
     } catch (submissionError) {
@@ -62,6 +68,7 @@ export default function RegisterForm() {
 
   return (
     <AuthFormCard error={errors.root?.message} onSubmit={handleSubmit(onSubmit)}>
+      <SocialAuthButtons mode="register" nextPath={nextPath} />
       <div className="space-y-3">
         <Input
           label="Name"
