@@ -1,11 +1,10 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
-import { useHashDialog } from "@/hooks/use-hash-modal";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -17,8 +16,6 @@ interface ConfirmDialogProps {
   variant?: "default" | "danger";
   /** If set, the confirm button stays disabled until the user types this value exactly. */
   confirmationText?: string;
-  /** URL hash route this dialog binds to so the back button closes it. Defaults to "confirm". */
-  hashRoute?: string;
   onConfirm: () => Promise<void> | void;
 }
 
@@ -31,16 +28,10 @@ export default function ConfirmDialog({
   cancelLabel = "Cancel",
   variant = "default",
   confirmationText,
-  hashRoute = "confirm",
   onConfirm,
 }: ConfirmDialogProps) {
   const [pending, setPending] = useState(false);
   const [typedConfirmation, setTypedConfirmation] = useState("");
-  const { requestClose } = useHashDialog(hashRoute, open, () => onOpenChange(false));
-
-  useEffect(() => {
-    if (open) setTypedConfirmation("");
-  }, [open]);
 
   const requiresTypedConfirmation = Boolean(confirmationText);
   const confirmDisabled = pending || (requiresTypedConfirmation && typedConfirmation !== confirmationText);
@@ -56,7 +47,17 @@ export default function ConfirmDialog({
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={(next) => !pending && !next && requestClose()}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) {
+          setTypedConfirmation("");
+        }
+        if (!pending) {
+          onOpenChange(next);
+        }
+      }}
+    >
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/30 backdrop-blur-[2px]" />
         <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-[92vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-surface p-6 text-ink shadow-raised">

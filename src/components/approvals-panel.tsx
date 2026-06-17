@@ -2,16 +2,13 @@
 
 import { useMemo } from "react";
 import { IconAdjustmentsHorizontal, IconShieldCheck } from "@tabler/icons-react";
+import Link from "next/link";
 
-import ApprovalDetailDialog from "@/components/approval-detail-dialog";
-import ApprovalFilterSheet from "@/components/approval-filter-sheet";
 import Badge from "@/components/ui/badge";
-import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import Select from "@/components/ui/select";
 import { useApprovals } from "@/hooks/use-approvals";
 import { useCliTokens } from "@/hooks/use-cli-tokens";
-import { useHashModal } from "@/hooks/use-hash-modal";
 import { cn } from "@/lib/cn";
 import { formatRelativeTime } from "@/lib/format";
 import type { Approval } from "@/lib/types";
@@ -28,14 +25,12 @@ const STATUS_STYLE: Record<Approval["status"], { dot: string; text: string; labe
 };
 
 export default function ApprovalsPanel() {
-  const { data: approvalData, isLoading: approvalsLoading, mutate: mutateApprovals } = useApprovals();
+  const { data: approvalData, isLoading: approvalsLoading } = useApprovals();
   const { data: tokens } = useCliTokens();
   const filter = useUiStore((state) => state.approvalFilter);
   const setFilter = useUiStore((state) => state.setApprovalFilter);
   const cliFilter = useUiStore((state) => state.approvalCliFilter);
   const setCliFilter = useUiStore((state) => state.setApprovalCliFilter);
-  const setSelectedApproval = useUiStore((state) => state.setSelectedApproval);
-  const filterSheet = useHashModal("filters");
 
   const cliOptions = useMemo(() => {
     const options = [{ value: "all", label: "All projects" }];
@@ -90,10 +85,7 @@ export default function ApprovalsPanel() {
       <div className="space-y-5">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-semibold text-ink">Requests</h2>
-          <button
-            onClick={filterSheet.openModal}
-            className="inline-flex items-center justify-center gap-2 rounded-md border border-border-strong bg-surface px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-surface-raised sm:hidden"
-          >
+          <Link href="/dashboard/filters" className="inline-flex items-center justify-center gap-2 rounded-md border border-border-strong bg-surface px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-surface-raised sm:hidden">
             <IconAdjustmentsHorizontal className="h-4 w-4" stroke={1.75} />
             Filters
             {activeFilterCount > 0 ? (
@@ -101,7 +93,7 @@ export default function ApprovalsPanel() {
                 {activeFilterCount}
               </span>
             ) : null}
-          </button>
+          </Link>
           <div className="hidden items-center gap-3 sm:flex">
             {cliOptions.length > 1 ? (
               <Select
@@ -156,30 +148,24 @@ export default function ApprovalsPanel() {
                     </div>
                     <p className="font-mono text-xs text-ink-faint">{approval.action}</p>
                   </div>
-                  <Button
-                    variant={approval.status === "pending" ? "primary" : "secondary"}
-                    onClick={() => setSelectedApproval(approval)}
-                    className="shrink-0 self-start lg:self-center"
+                  <Link
+                    href={`/dashboard/approvals/${approval.id}`}
+                    className={cn(
+                      "inline-flex shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors",
+                      approval.status === "pending"
+                        ? "border border-accent bg-accent text-accent-ink hover:bg-accent-strong hover:border-accent-strong"
+                        : "border border-border-strong bg-surface text-ink hover:bg-surface-raised",
+                    )}
                   >
                     <IconShieldCheck className="h-4 w-4" />
                     {approval.status === "pending" ? "Review" : "Inspect"}
-                  </Button>
+                  </Link>
                 </div>
               </Card>
             ))
           )}
         </div>
       </div>
-
-      <ApprovalDetailDialog onMutate={mutateApprovals} />
-      <ApprovalFilterSheet
-        statusOptions={statusOptions}
-        statusValue={filter}
-        onStatusChange={(value) => setFilter(value as typeof filter)}
-        cliOptions={cliOptions}
-        cliValue={cliFilter}
-        onCliChange={setCliFilter}
-      />
     </div>
   );
 }

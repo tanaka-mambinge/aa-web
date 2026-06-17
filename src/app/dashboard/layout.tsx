@@ -5,21 +5,26 @@ import { redirect } from "next/navigation";
 import DashboardNav from "@/components/dashboard-nav";
 import LoadingScreen from "@/components/loading-screen";
 import PushNotificationsBanner from "@/components/push-notifications-banner";
-import SettingsDialog from "@/components/settings-dialog";
 import { getServerUser } from "@/lib/server-auth";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}) {
   // The auth check reads cookies/headers and does an uncached fetch, so it must
   // live in its own Suspense boundary — otherwise the loading fallback never
   // shows and navigation just blocks while the token is verified.
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <AuthenticatedShell>{children}</AuthenticatedShell>
+      <AuthenticatedShell modal={modal}>{children}</AuthenticatedShell>
     </Suspense>
   );
 }
 
-async function AuthenticatedShell({ children }: { children: React.ReactNode }) {
+async function AuthenticatedShell({ children, modal }: { children: React.ReactNode; modal: React.ReactNode }) {
   const user = await getServerUser();
   if (!user) {
     redirect("/login?next=/dashboard");
@@ -36,7 +41,7 @@ async function AuthenticatedShell({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
-      <SettingsDialog user={user} />
+      {modal}
     </div>
   );
 }

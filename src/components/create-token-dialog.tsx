@@ -1,14 +1,16 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { IconX } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
-import { useHashDialog } from "@/hooks/use-hash-modal";
 import { apiRequest } from "@/lib/http";
 import type { CliToken, CliTokenCreateResponse } from "@/lib/types";
 import { useUiStore } from "@/stores/ui-store";
@@ -26,51 +28,46 @@ const EXPIRY_OPTIONS = [
 ];
 
 interface CreateTokenDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  closeHref: string;
   onCreated: () => Promise<CliToken[] | undefined>;
 }
 
-export default function CreateTokenDialog({ open, onOpenChange, onCreated }: CreateTokenDialogProps) {
-  const [name, setName] = useState("");
-  const [expiresInDays, setExpiresInDays] = useState("30");
-  const [error, setError] = useState<string | null>(null);
+type FormValues = z.infer<typeof schema>;
+
+export default function CreateTokenDialog({ closeHref, onCreated }: CreateTokenDialogProps) {
+  const router = useRouter();
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const setCreatedToken = useUiStore((state) => state.setCreatedToken);
-  const { requestClose } = useHashDialog("create-token", open, () => onOpenChange(false));
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { name: "", expiresInDays: "30" },
+  });
 
-  const parsedDays = useMemo(() => {
-    if (!expiresInDays.trim()) return null;
-    return Number(expiresInDays);
-  }, [expiresInDays]);
-
-  async function submit() {
-    const result = schema.safeParse({ name, expiresInDays });
-    if (!result.success) {
-      setError(result.error.issues[0]?.message ?? "Invalid form");
-      return;
-    }
-
+  async function onSubmit(values: FormValues) {
     try {
-      setError(null);
+      setSubmitError(null);
       const token = await apiRequest<CliTokenCreateResponse>("/cli-tokens", {
         method: "POST",
         body: JSON.stringify({
-          name,
-          expires_in_days: parsedDays,
+          name: values.name,
+          expires_in_days: values.expiresInDays.trim() ? Number(values.expiresInDays) : null,
         }),
       });
       setCreatedToken(token);
       await onCreated();
-      setName("");
-      setExpiresInDays("30");
-      onOpenChange(false);
-    } catch (submissionError) {
-      setError(submissionError instanceof Error ? submissionError.message : "Failed to create token");
+      router.replace("/dashboard/tokens/new/reveal");
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Failed to create token");
     }
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={(next) => !next && requestClose()}>
+    <Dialog.Root open onOpenChange={(next) => !next && router.push(closeHref)}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/30 backdrop-blur-[2px]" />
         <Dialog.Content className="fixed inset-0 z-50 flex h-[100dvh] w-screen flex-col bg-canvas text-ink sm:left-1/2 sm:top-1/2 sm:h-auto sm:max-h-[90dvh] sm:w-[min(92vw,32rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-lg sm:border sm:border-border sm:bg-surface sm:shadow-raised">
@@ -82,28 +79,39 @@ export default function CreateTokenDialog({ open, onOpenChange, onCreated }: Cre
                 that project&apos;s environment.
               </Dialog.Description>
             </div>
-            <Dialog.Close asChild>
-              <button
-                aria-label="Close"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink-muted transition-colors hover:bg-surface-raised hover:text-ink"
-              >
-                <IconX className="h-5 w-5" stroke={1.75} />
-              </button>
-            </Dialog.Close>
+            <Button variant="ghost" size="icon" aria-label="Close" onClick={() => router.push(closeHref)}>
+              <IconX className="h-5 w-5" stroke={1.75} />
+            </Button>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-7 sm:px-6 sm:py-8">
+          <form className="min-h-0 flex-1 overflow-y-auto px-5 py-7 sm:px-6 sm:py-8" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-5">
-              <Input label="Project name" value={name} onChange={(event) => setName(event.target.value)} error={error ?? undefined} placeholder="billing-service" />
+              {submitError ? (
+                <div className="rounded-md border border-danger/20 bg-danger-muted px-4 py-3 text-sm text-danger">
+                  {submitError}
+                </div>
+              ) : null}
+              <Input
+                label="Project name"
+                placeholder="billing-service"
+                error={errors.name?.message}
+                {...register("name")}
+              />
               <div className="space-y-2">
                 <span className="text-sm font-medium text-ink-muted">Expires in</span>
-                <Select aria-label="Expires in" className="w-full" value={expiresInDays} onValueChange={setExpiresInDays} options={EXPIRY_OPTIONS} />
+                <Controller
+                  control={control}
+                  name="expiresInDays"
+                  render={({ field }) => (
+                    <Select aria-label="Expires in" className="w-full" value={field.value} onValueChange={field.onChange} options={EXPIRY_OPTIONS} />
+                  )}
+                />
               </div>
             </div>
-          </div>
-          <div className="mt-auto flex gap-3 border-t border-border px-5 py-5 sm:px-6">
-            <Button onClick={() => void submit()}>Create project token</Button>
-            <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
-          </div>
+            <div className="mt-8 flex gap-3 border-t border-border pt-5">
+              <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Creating…" : "Create project token"}</Button>
+              <Button variant="ghost" type="button" onClick={() => router.push(closeHref)}>Cancel</Button>
+            </div>
+          </form>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

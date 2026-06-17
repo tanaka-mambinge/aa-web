@@ -1,15 +1,14 @@
 "use client";
 
 import { IconBell, IconX } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 
-import { useUiStore } from "@/stores/ui-store";
 import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 
 export default function PushNotificationsBanner() {
-  const setSettingsOpen = useUiStore((state) => state.setSettingsOpen);
-  const setSettingsTab = useUiStore((state) => state.setSettingsTab);
+  const router = useRouter();
   const { status, supported, configured, subscribed, pref, permission, message, dismiss } = usePushNotifications();
 
   if (status === "loading" || !supported || !configured || permission === "denied" || subscribed || pref !== "unset") {
@@ -31,10 +30,7 @@ export default function PushNotificationsBanner() {
       <div className="flex flex-wrap gap-3 sm:self-center">
         <Button
           variant="secondary"
-          onClick={() => {
-            setSettingsTab("notifications");
-            setSettingsOpen(true);
-          }}
+          onClick={() => router.push("/dashboard/settings/notifications")}
         >
           Open settings
         </Button>

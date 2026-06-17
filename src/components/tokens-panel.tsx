@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { IconBan, IconKey, IconTerminal2, IconTrash } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 
 import CreateTokenDialog from "@/components/create-token-dialog";
-import TokenRevealDialog from "@/components/token-reveal-dialog";
 import Badge from "@/components/ui/badge";
 import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
@@ -16,8 +16,8 @@ import { apiRequest } from "@/lib/http";
 import type { CliToken } from "@/lib/types";
 
 export default function TokensPanel() {
-  const [createTokenOpen, setCreateTokenOpen] = useState(false);
   const [tokenToDelete, setTokenToDelete] = useState<CliToken | null>(null);
+  const router = useRouter();
   const { data: tokens, isLoading: tokensLoading, mutate: mutateTokens } = useCliTokens();
 
   async function deleteToken(token: CliToken) {
@@ -46,7 +46,7 @@ export default function TokensPanel() {
             filtered by project.
           </p>
         </div>
-        <Button onClick={() => setCreateTokenOpen(true)}>
+        <Button onClick={() => router.push("/dashboard/tokens/new")}>
           <IconKey className="h-4 w-4" />
           New token
         </Button>
@@ -130,8 +130,7 @@ export default function TokensPanel() {
         </div>
       </Card>
 
-      <CreateTokenDialog open={createTokenOpen} onOpenChange={setCreateTokenOpen} onCreated={mutateTokens} />
-      <TokenRevealDialog />
+      <CreateTokenDialog closeHref="/dashboard/tokens" onCreated={mutateTokens} />
       <ConfirmDialog
         open={Boolean(tokenToDelete)}
         onOpenChange={(open) => !open && setTokenToDelete(null)}

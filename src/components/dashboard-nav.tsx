@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -17,7 +18,6 @@ import Tooltip from "@/components/ui/tooltip";
 import { useEmailPrivacy } from "@/hooks/use-email-privacy";
 import { cn } from "@/lib/cn";
 import type { User } from "@/lib/types";
-import { useUiStore } from "@/stores/ui-store";
 
 interface DashboardNavProps {
   user: User;
@@ -33,8 +33,7 @@ const COLLAPSE_KEY = "aa.sidebar.collapsed";
 
 export default function DashboardNav({ user, initialCollapsed }: DashboardNavProps) {
   const pathname = usePathname();
-  const setSettingsOpen = useUiStore((state) => state.setSettingsOpen);
-  const setSettingsTab = useUiStore((state) => state.setSettingsTab);
+  const router = useRouter();
   const { displayEmail } = useEmailPrivacy(user.email);
   // Seeded from a cookie read on the server, so the very first render —
   // server HTML included — already matches the remembered preference.
@@ -60,8 +59,6 @@ export default function DashboardNav({ user, initialCollapsed }: DashboardNavPro
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
-
-
   const initial = user.email.charAt(0).toUpperCase();
   const isCollapsed = collapsed;
 
@@ -196,8 +193,7 @@ export default function DashboardNav({ user, initialCollapsed }: DashboardNavPro
               <button
                 type="button"
                 onClick={() => {
-                  setSettingsTab("profile");
-                  setSettingsOpen(true);
+                  router.push("/dashboard/settings/profile");
                   setMobileOpen(false);
                 }}
                 className={cn(
